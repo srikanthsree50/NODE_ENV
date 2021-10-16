@@ -6,11 +6,24 @@ const PORT = process.env.PORT || 3000;
 const bootroute = require('./routes/bootcamps')
 const logger = require('./middlewares/logger');
 const morgan = require('morgan')
+const connectDb = require('./config/db');
+const connectDB = require('./config/db');
+const colors = require('colors');
 if(process.env.NODE_ENV === 'development'){
 
     app.use(morgan('dev'))
 }
+connectDB();
  app.use('/api/v1/bootcamps',bootroute);
-app.listen(PORT, () => {
-    console.log(`App running in ${process.env.NODE_ENV} at port ${PORT}!`);
+
+const server = app.listen(PORT, () => {
+  
+    console.log(`App running in ${process.env.NODE_ENV} at port ${PORT}!`.yellow.bold);
 });
+
+process.on('unhandledRejection',(err,promise) =>{
+console.log(`error : ${err.message}`);
+server.close(() =>{
+    process.exit(1);
+})
+})
