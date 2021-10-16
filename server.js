@@ -9,11 +9,16 @@ const morgan = require('morgan')
 const connectDb = require('./config/db');
 const connectDB = require('./config/db');
 const colors = require('colors');
+
+
+
 if(process.env.NODE_ENV === 'development'){
 
     app.use(morgan('dev'))
 }
+
 connectDB();
+app.use(express.json());
  app.use('/api/v1/bootcamps',bootroute);
 
 const server = app.listen(PORT, () => {
