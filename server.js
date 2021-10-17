@@ -8,6 +8,7 @@ const logger = require('./middlewares/logger');
 const morgan = require('morgan')
 const connectDb = require('./config/db');
 const connectDB = require('./config/db');
+const errorHandler = require('./middlewares/error')
 const colors = require('colors');
 
 
@@ -20,7 +21,7 @@ if(process.env.NODE_ENV === 'development'){
 connectDB();
 app.use(express.json());
  app.use('/api/v1/bootcamps',bootroute);
-
+app.use(errorHandler);
 const server = app.listen(PORT, () => {
   
     console.log(`App running in ${process.env.NODE_ENV} at port ${PORT}!`.yellow.bold);
