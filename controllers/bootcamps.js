@@ -1,9 +1,9 @@
 const Bootcamp = require('../models/bootcamp');
 const errorResponse = require('../utils/errorResponse')
+const asyncHandler = require('../middlewares/async');
 
-exports.getBootcamps = async (req,res,next) =>{
+exports.getBootcamps = asyncHandler(async (req,res,next) =>{
 
-    try{
         const bootcamps = await Bootcamp.find();
 
         res.status(200).json({
@@ -11,16 +11,9 @@ exports.getBootcamps = async (req,res,next) =>{
             count:bootcamps.length,
             data:bootcamps
     })
-    }
-    catch(err){
-      next(err);
-   
-    }
- 
-}
+})
 
-exports.getBootcamp = async (req,res,next) =>{
-    try{
+exports.getBootcamp = asyncHandler(async (req,res,next) =>{
         const bootcamp = await Bootcamp.findById(req.params.id);
         if(!bootcamp){
          return next(new errorResponse(` resource not found with id : ${req.params.id}`,400));
@@ -29,14 +22,11 @@ exports.getBootcamp = async (req,res,next) =>{
             success:true,
             data:bootcamp
     })
-    }
-    catch(err){
-        next(err);
-    }
-}
+ 
+})
 
-exports.updateBootcamp = async (req,res,next) =>{
-    try{
+exports.updateBootcamp = asyncHandler(async (req,res,next) =>{
+    
         const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id,req.body,{
             new:true,
             runValidators:true
@@ -49,27 +39,21 @@ exports.updateBootcamp = async (req,res,next) =>{
             success:true,
             data:bootcamp
     })
-    }
-    catch(err){
-        next(err);
-    }
-}
 
-exports.createBootcamp = async (req,res,next) =>{
-    try{
+})
+
+exports.createBootcamp = asyncHandler(async (req,res,next) =>{
+
         const bootcamp = await Bootcamp.create(req.body);
         res.status(201).json({
             success:true,
             data:bootcamp
     })
-    }
-    catch(err){
-        next(err);
-    }
-}
+ 
+})
 
-exports.deleteBootcamp = async (req,res,next) =>{
-    try{
+exports.deleteBootcamp = asyncHandler(async (req,res,next) =>{
+
         const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
         if(!bootcamp){
 
@@ -79,8 +63,5 @@ exports.deleteBootcamp = async (req,res,next) =>{
             success:true,
             data:bootcamp
     })
-    }
-    catch(err){
-        next(err);
-}
-}
+ 
+})
