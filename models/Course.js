@@ -33,7 +33,7 @@ createdAt:{
 },
 bootcamp:{
     type: mongoose.Schema.ObjectId,
-    ref:'bootcamp',
+    ref:'Bootcamp',
 required:true
 }
 });
