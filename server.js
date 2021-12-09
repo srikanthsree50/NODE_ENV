@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const dotenv = require('dotenv')
 dotenv.config({path:'./config/config.env'})
@@ -6,6 +7,7 @@ const PORT = process.env.PORT || 3000;
 const bootroute = require('./routes/bootcamps')
 const courseroute = require('./routes/courses')
 const logger = require('./middlewares/logger');
+const fileupload = require('express-fileupload');
 const morgan = require('morgan')
 const connectDb = require('./config/db');
 const connectDB = require('./config/db');
@@ -21,9 +23,11 @@ if(process.env.NODE_ENV === 'development'){
 
 connectDB();
 app.use(express.json());
+app.use(fileupload());
+app.use(express.static(path.join(__dirname,'public')));
  app.use('/api/v1/bootcamps',bootroute);
  app.use('/api/v1/courses',courseroute);
-app.use(errorHandler);
+ app.use(errorHandler);
 const server = app.listen(PORT, () => {
   
     console.log(`App running in ${process.env.NODE_ENV} at port ${PORT}!`.yellow.bold);
