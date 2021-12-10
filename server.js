@@ -13,7 +13,7 @@ const connectDb = require('./config/db');
 const connectDB = require('./config/db');
 const errorHandler = require('./middlewares/error')
 const colors = require('colors');
-
+const auth = require('./routes/auth')
 
 
 if(process.env.NODE_ENV === 'development'){
@@ -27,6 +27,8 @@ app.use(fileupload());
 app.use(express.static(path.join(__dirname,'public')));
  app.use('/api/v1/bootcamps',bootroute);
  app.use('/api/v1/courses',courseroute);
+ app.use('/api/v1/auth',auth);
+ 
  app.use(errorHandler);
 const server = app.listen(PORT, () => {
   
