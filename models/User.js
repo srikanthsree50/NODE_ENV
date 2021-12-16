@@ -25,7 +25,7 @@ password:{
     type: String,
     required:[true,' please provide a password'],
     minlength:6,
-    select:false
+  select:false
 },
 resetPasswordToken:String,
 resetPasswordExpire:Date,
@@ -44,8 +44,8 @@ userSchema.methods.getSignedJwtToken = function() {
     return jwt.sign({id:this._id},process.env.JWT_SECRET,{expiresIn:process.env.JWT_EXPIRES})
 }
 
-userSchema.methods.matchPassword = async function(enteredPassword) {
-    return await bcrypt.compare(enteredPassword,this.password);
+userSchema.methods.matchPassword = async function(enteredPassword)  {
+    return await bcrypt.compare(enteredPassword, this.password);
 }
 
 module.exports = mongoose.model('User',userSchema);
