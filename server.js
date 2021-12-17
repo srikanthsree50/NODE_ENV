@@ -14,7 +14,7 @@ const connectDB = require('./config/db');
 const errorHandler = require('./middlewares/error')
 const colors = require('colors');
 const auth = require('./routes/auth')
-
+const cookieParser = require('cookie-parser');
 
 if(process.env.NODE_ENV === 'development'){
 
@@ -23,6 +23,7 @@ if(process.env.NODE_ENV === 'development'){
 
 connectDB();
 app.use(express.json());
+app.use(cookieParser());
 app.use(fileupload());
 app.use(express.static(path.join(__dirname,'public')));
  app.use('/api/v1/bootcamps',bootroute);
