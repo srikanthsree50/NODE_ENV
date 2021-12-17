@@ -56,3 +56,11 @@ if(process.env.NODE_ENV === 'production'){
         token
     });
 }
+
+exports.getCurrentLoggedInUser = asyncHandler(async (req,res,next) => {
+    const user = await User.findById(req.user.id)
+    res.status(200).json({
+        success:true,
+        data:user
+    })
+})
