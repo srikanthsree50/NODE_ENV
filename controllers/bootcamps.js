@@ -3,6 +3,7 @@ const errorResponse = require('../utils/errorResponse')
 const asyncHandler = require('../middlewares/async');
 const geocoder = require('../utils/geocoder')
 const path = require('path');
+const ErrorResponse = require('../utils/errorResponse');
 
 exports.getBootcamps = asyncHandler(async (req,res,next) =>{
 
@@ -39,7 +40,11 @@ exports.updateBootcamp = asyncHandler(async (req,res,next) =>{
 })
 
 exports.createBootcamp = asyncHandler(async (req,res,next) =>{
-
+req.body.user = req.user.id;
+const publishedBootcamp = await Bootcamp.findOne({user:req.user.id})
+if(publishedBootcamp && req.user.role !== 'admin'){
+    return next(new errorResponse(` user with Id ${req.user.id} already published a bootcamp`,400));
+}
         const bootcamp = await Bootcamp.create(req.body);
         res.status(201).json({
             success:true,
