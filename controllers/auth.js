@@ -64,3 +64,19 @@ exports.getCurrentLoggedInUser = asyncHandler(async (req,res,next) => {
         data:user
     })
 })
+
+
+exports.forgotPassword = asyncHandler(async (req,res,next) => {
+    const user = await User.findOne({
+        email:req.body.email
+    })
+    if(!user){
+        return next(new ErrorResponse('user doesnt exist with this emailId please try again...',404))
+    }
+    const resetToken = user.getResetPasswordToken();
+    await user.save({ validateBeforeSave : false })
+    res.status(200).json({
+        success:true,
+        data:user
+    })
+})
