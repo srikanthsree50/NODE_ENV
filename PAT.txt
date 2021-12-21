@@ -1,1 +1,6 @@
 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
+
+pm.environment.set("TOKEN",pm.response.json().token)
+
+// for getting updated with signup routes and login routes to avoid copy pasting tokens
+// goto headers -> select authorization -> nearer token set to {{TOKEN}}
