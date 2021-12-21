@@ -3,6 +3,7 @@ const errorResponse = require('../utils/errorResponse')
 const asyncHandler = require('../middlewares/async');
 const ErrorResponse = require('../utils/errorResponse');
 const bcrypt = require('bcryptjs');
+const sendMail = require('../utils/sendMail');
 
 exports.register = asyncHandler(async (req,res,next) => {
     
@@ -75,8 +76,28 @@ exports.forgotPassword = asyncHandler(async (req,res,next) => {
     }
     const resetToken = user.getResetPasswordToken();
     await user.save({ validateBeforeSave : false })
-    res.status(200).json({
-        success:true,
-        data:user
-    })
+
+const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/resetpassword/${resetToken}`
+const message = ` you are receiving this email b'coz you have requested for reset password please make a PUT request to \n\n ${resetUrl}`
+    
+try{
+await sendMail({
+    email:user.email,
+    subject: 'password reset token',
+    message
+})
+res.status(200).json({ success:true , data:' email sent successfully...'})
+}
+catch(err){
+console.log(err);
+user.resetPasswordToken = undefined;
+user.resetPasswordExpire = undefined;
+await user.save({ validateBeforeSave: false});
+return next(' Email could not be sent...',500);
+}
+
+// res.status(200).json({
+//         success:true,
+//         data:user
+//     })
 })
