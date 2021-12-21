@@ -24,14 +24,21 @@ exports.getBootcamp = asyncHandler(async (req,res,next) =>{
 
 exports.updateBootcamp = asyncHandler(async (req,res,next) =>{
     
-        const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id,req.body,{
-            new:true,
-            runValidators:true
-        });
+        let bootcamp = await Bootcamp.findById(req.params.id);
         if(!bootcamp){
 
             return next(new errorResponse(` resource not found with id : ${req.params.id}`,400));
-        }
+        } 
+
+if(bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin'){
+
+    return next(new errorResponse(` User ${req.params.id} is not authorized to update thois bootcamp`,401));
+}
+
+bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id,req.body,{
+    new : true,
+    runValidators:true
+})
         res.status(200).json({
             success:true,
             data:bootcamp
@@ -61,6 +68,12 @@ exports.deleteBootcamp = asyncHandler(async (req,res,next) =>{
             return next(new errorResponse(` resource not found with id : ${req.params.id}`,400));
         }
 
+
+if(bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin'){
+
+    return next(new errorResponse(` User ${req.params.id} is not authorized to remove this bootcamp`,401));
+}
+
         bootcamp.remove();
         res.status(200).json({
             success:true,
@@ -77,6 +90,12 @@ exports.bootcampPhotoUpload = asyncHandler(async (req,res,next) =>{
 
         return next(new errorResponse(` resource not found with id : ${req.params.id}`,400));
     }
+
+    if(bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin'){
+
+        return next(new errorResponse(` User ${req.params.id} is not authorized to update this bootcamp Photo`,401));
+    }
+
     if(!req.files){
 
         return next(new errorResponse(` please upload a file`,400));
