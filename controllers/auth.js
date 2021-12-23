@@ -3,6 +3,8 @@ const errorResponse = require('../utils/errorResponse')
 const asyncHandler = require('../middlewares/async');
 const ErrorResponse = require('../utils/errorResponse');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+
 const sendMail = require('../utils/sendMail');
 
 exports.register = asyncHandler(async (req,res,next) => {
@@ -67,6 +69,25 @@ exports.getCurrentLoggedInUser = asyncHandler(async (req,res,next) => {
 })
 
 
+exports.resetPassword = asyncHandler(async (req,res,next) => {
+    const resetPasswordToken = crypto.createHash('sha256').update(req.params.resettoken).digest('hex');
+
+    const user = await User.findOne({ 
+        resetPasswordToken,
+        resetPasswordExpire : { $gt : Date.now() }
+    })
+if(!user){
+return next( new ErrorResponse(' Invalid Token ',400));
+}
+
+user.password = req.body.password;
+user.resetPasswordToken = undefined;
+user.resetPasswordExpire = undefined;
+await user.save();
+
+ sendTokenResponse(user,200,res);
+})
+
 exports.forgotPassword = asyncHandler(async (req,res,next) => {
     const user = await User.findOne({
         email:req.body.email
@@ -77,7 +98,7 @@ exports.forgotPassword = asyncHandler(async (req,res,next) => {
     const resetToken = user.getResetPasswordToken();
     await user.save({ validateBeforeSave : false })
 
-const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/resetpassword/${resetToken}`
+const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/resetpassword/${resetToken}`
 const message = ` you are receiving this email b'coz you have requested for reset password please make a PUT request to \n\n ${resetUrl}`
     
 try{
@@ -93,7 +114,7 @@ console.log(err);
 user.resetPasswordToken = undefined;
 user.resetPasswordExpire = undefined;
 await user.save({ validateBeforeSave: false});
-return next(' Email could not be sent...',500);
+return next(' Email could not be sent or invalid mailtrap username /password...',500);
 }
 
 // res.status(200).json({
