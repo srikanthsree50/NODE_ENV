@@ -69,6 +69,33 @@ exports.getCurrentLoggedInUser = asyncHandler(async (req,res,next) => {
 })
 
 
+exports.updateUser = asyncHandler(async (req,res,next) => {
+    const fieldsToUpdate = {
+        name:req.body.name,
+        email:req.body.email
+    }
+    const user = await User.findByIdAndUpdate(req.user.id,fieldsToUpdate,{
+        new:true,
+        runValidators:true
+    })
+    res.status(200).json({
+        success:true,
+        data:user
+    })
+})
+
+
+exports.changePassword = asyncHandler(async (req,res,next) => {
+  
+    const user = await User.findByIdAndUpdate(req.user.id).select('+password')
+    if(!(await user.matchPassword(req.body.currentPassword))){
+return next(new ErrorResponse('password is incorrect',401))
+    }
+user.password = req.body.newPassword;
+    await user.save();
+    sendTokenResponse(user,200,res)
+})
+
 exports.resetPassword = asyncHandler(async (req,res,next) => {
     const resetPasswordToken = crypto.createHash('sha256').update(req.params.resettoken).digest('hex');
 
