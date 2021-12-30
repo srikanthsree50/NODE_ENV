@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 3000;
 const bootroute = require('./routes/bootcamps')
 const courseroute = require('./routes/courses')
 const adminroute = require('./routes/admin')
+const reviewroute = require('./routes/reviews')
 
 const logger = require('./middlewares/logger');
 const fileupload = require('express-fileupload');
@@ -29,10 +30,13 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(fileupload());
 app.use(express.static(path.join(__dirname,'public')));
+
  app.use('/api/v1/bootcamps',bootroute);
  app.use('/api/v1/courses',courseroute);
  app.use('/api/v1/auth',auth);
  app.use('/api/v1/admin',adminroute)
+app.use('/api/v1/reviews', reviewroute);
+
  app.use(errorHandler);
 const server = app.listen(PORT, () => {
   
