@@ -1,5 +1,5 @@
 const express = require('express');
-const { getReviews } = require('../controllers/reviews');
+const { getReviews,getReview } = require('../controllers/reviews');
 const Review = require('../models/Review')
 const advancedSearchResults = require('../middlewares/advancedSearchResults')
 const router = express.Router({ mergeParams:true});
@@ -11,5 +11,9 @@ router
     path:'bootcamp',
     select:'name description'
   }),getReviews)
+
+  router
+  .route('/:id')
+.get(getReview)
 
 module.exports = router;
