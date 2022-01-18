@@ -60,3 +60,51 @@ res.status(201).json({
 
 })
 
+
+exports.updateReview = asyncHandler(async (req,res,next) =>{
+
+    let review = await Review.findById(req.params.id);
+
+if(!review){
+return next(new errorResponse(`no review with the id${req.params.id}`),404)
+}
+
+if(review.user.toString() !== req.user.id && req.user.role !== 'admin'){
+
+    return next(new errorResponse(` User ${req.params.id} is not authorized to update this course`,401));
+}
+
+review = await Review.findByIdAndUpdate(req.params.id,req.body,{
+    new:true,
+    runValidators:true
+});
+
+res.status(200).json({
+    success:true,
+    data:review
+})
+
+})
+
+
+exports.deleteReview = asyncHandler(async (req,res,next) =>{
+
+const review = await Review.findById(req.params.id);
+
+if(!review){
+return next(new errorResponse(`no review with the id${req.params.id}`),404)
+}
+
+if(review.user.toString() !== req.user.id && req.user.role !== 'admin'){
+
+return next(new errorResponse(` User ${req.params.id} is not authorized to delete this course`,401));
+}
+
+await review.remove();
+res.status(200).json({
+success:true,
+data:{}
+})
+
+})
+
