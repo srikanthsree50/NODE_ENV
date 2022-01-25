@@ -10,6 +10,9 @@ const courseroute = require('./routes/courses')
 const adminroute = require('./routes/admin')
 const reviewroute = require('./routes/reviews')
 
+const mongoSanitize = require('express-mongo-sanitize');
+
+
 const logger = require('./middlewares/logger');
 const fileupload = require('express-fileupload');
 const morgan = require('morgan')
@@ -30,6 +33,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(fileupload());
 app.use(express.static(path.join(__dirname,'public')));
+
+app.use(mongoSanitize());
 
  app.use('/api/v1/bootcamps',bootroute);
  app.use('/api/v1/courses',courseroute);
