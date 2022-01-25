@@ -69,6 +69,18 @@ exports.getCurrentLoggedInUser = asyncHandler(async (req,res,next) => {
 })
 
 
+exports.logOut = asyncHandler(async (req,res,next) => {
+    res.cookie('token','none',{
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly:true
+    })
+    res.status(200).json({
+        success:true,
+        data:{}
+    })
+})
+
+
 exports.updateUser = asyncHandler(async (req,res,next) => {
     const fieldsToUpdate = {
         name:req.body.name,
