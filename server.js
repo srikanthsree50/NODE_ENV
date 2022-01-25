@@ -13,6 +13,9 @@ const reviewroute = require('./routes/reviews')
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const xss = require('xss-clean');
+const rateLimit = require('express-rate-limit');
+const hpp = require('hpp');
+const cors = require('cors');
 
 const logger = require('./middlewares/logger');
 const fileupload = require('express-fileupload');
@@ -38,6 +41,13 @@ app.use(express.static(path.join(__dirname,'public')));
 app.use(mongoSanitize());
 app.use(helmet());
 app.use(xss());
+app.use(cors()); // enable CORS 
+app.use(hpp()); // prevent http params pollution attack
+const limiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // 10 mins
+    max:100
+});
+app.use(limiter);
 
  app.use('/api/v1/bootcamps',bootroute);
  app.use('/api/v1/courses',courseroute);
