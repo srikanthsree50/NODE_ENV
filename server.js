@@ -11,7 +11,8 @@ const adminroute = require('./routes/admin')
 const reviewroute = require('./routes/reviews')
 
 const mongoSanitize = require('express-mongo-sanitize');
-
+const helmet = require('helmet');
+const xss = require('xss-clean');
 
 const logger = require('./middlewares/logger');
 const fileupload = require('express-fileupload');
@@ -35,6 +36,8 @@ app.use(fileupload());
 app.use(express.static(path.join(__dirname,'public')));
 
 app.use(mongoSanitize());
+app.use(helmet());
+app.use(xss());
 
  app.use('/api/v1/bootcamps',bootroute);
  app.use('/api/v1/courses',courseroute);
